@@ -4,6 +4,7 @@ import math
 from bpy_extras.io_utils import ExportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatVectorProperty
 from bpy.types import Operator
+from .utils_p3dxml import *
 
 #code by : brecht - devtalk.blender.org ------------>
 def to_hex(c):
