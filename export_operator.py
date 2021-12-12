@@ -259,22 +259,13 @@ def write_shader_data(context, filepath, selected, lighting, filtermode, pddisha
     image = ""
     
     #lightingoption
-    if lighting == True:
-        light = 1
-    else:
-        light = 0
-
+    light = int(lighting)
     #twosided
-    if twosided == True:
-        two = 1
-    else:
-        two = 0
-
+    two = int(twosided)
     #alphatest
-    if alphatest == True:
-        at = 1
-    else:
-        at = 0
+    at = int(alphatest)
+    
+    objs = context.selected_objects if selected else bpy.data.objects
     
     #Let's create the file first
     f = open(filepath, 'w')
@@ -285,10 +276,6 @@ def write_shader_data(context, filepath, selected, lighting, filtermode, pddisha
 <!--Created with Tays's P3DXML texture&shader exporter, template xml file created with Lucas' Pure3D Editor 4.5-->
 <Pure3DFile LucasPure3DEditorVersion="4.4">""")
     
-    if selected == True:
-        objs = bpy.context.selected_objects
-    else:
-        objs = bpy.data.objects
     
     #Keep track of what textures have been written to the file already
     if (exporttype == '0') or (exporttype == '1'):
@@ -368,113 +355,108 @@ class ExportShaderData(Operator, ExportHelper):
     )
     
     pddishader: EnumProperty(
-    name = 'PDDI Shader',
-    description = 'Filter mode in p3d edtior.',
-    items = (
-            ('error', 'error', ''),
-            ('simple', 'simple', ''),
-            ('lightweight', 'lightweight', ''),
-            ('lightmap', 'lightmap', ''),
-            ('environment', 'environment', ''),
-            ('spheremap', 'spheremap', ''),
-            ('projtex', 'projtex', ''),
-            ('pointsprite', 'pointsprite', ''),
-            ('layered', 'layered', ''),
-            ('layeredlmap', 'layeredlmap', ''),
-            ('toon', 'toon', ''),
-            ('hctune', 'hctune', '')),
-        default = 'simple'
-    )
+        name = 'PDDI Shader',
+        description = 'Filter mode in p3d edtior.',
+        items = (
+                ('error', 'error', ''),
+                ('simple', 'simple', ''),
+                ('lightweight', 'lightweight', ''),
+                ('lightmap', 'lightmap', ''),
+                ('environment', 'environment', ''),
+                ('spheremap', 'spheremap', ''),
+                ('projtex', 'projtex', ''),
+                ('pointsprite', 'pointsprite', ''),
+                ('layered', 'layered', ''),
+                ('layeredlmap', 'layeredlmap', ''),
+                ('toon', 'toon', ''),
+                ('hctune', 'hctune', '')),
+            default = 'simple'
+        )
     
-
     diffuse: FloatVectorProperty(  
         name="Diffuse",
         subtype='COLOR',
         default=(1.0, 1.0, 1.0),
         min=0.0, max=1.0,
-        description="Diffuse in the p3d editor. Only works with lighting enabled."
-    )
+        description="Diffuse in the p3d editor. Only works with lighting enabled.",)
+
     blendmode: EnumProperty(
-    name = 'Blend Mode',
-    description = 'Blend mode in p3d edtior.',
-    items = (
-            ('0', 'None', ''),
-            ('1', 'Alpha', ''),
-            ('2', 'Additive', ''),
-            ('3', 'Subtractive', '')),
-        default = '0'
-    )
+        name = 'Blend Mode',
+        description = 'Blend mode in p3d edtior.',
+        items = (
+                ('0', 'None', ''),
+                ('1', 'Alpha', ''),
+                ('2', 'Additive', ''),
+                ('3', 'Subtractive', '')),
+            default = '0'
+        )
     
     filtermode: EnumProperty(
-    name = 'Filter Mode',
-    description = 'Filter mode in p3d edtior.',
-    items = (
-            ('0', 'Nearest Neighbour', ''),
-            ('1', 'Linear', ''),
-            ('2', 'Nearest Neighbour, Mip Nearest Neighbour', ''),
-            ('3', 'Linear, Mip Nearest Neighbour', ''),
-            ('4', 'Linear, Mip Linear', '')),
-        default = '1'
-    )
+        name = 'Filter Mode',
+        description = 'Filter mode in p3d edtior.',
+        items = (
+                ('0', 'Nearest Neighbour', ''),
+                ('1', 'Linear', ''),
+                ('2', 'Nearest Neighbour, Mip Nearest Neighbour', ''),
+                ('3', 'Linear, Mip Nearest Neighbour', ''),
+                ('4', 'Linear, Mip Linear', '')),
+            default = '1'
+        )
     
     uvmode: EnumProperty(
-    name = 'UV Mode',
-    description = 'UV mode in p3d edtior.',
-    items = (
-            ('0', 'Tile', ''),
-            ('1', 'Clamp', '')),
-        default = '0'
-    )
+        name = 'UV Mode',
+        description = 'UV mode in p3d edtior.',
+        items = (
+                ('0', 'Tile', ''),
+                ('1', 'Clamp', '')),
+            default = '0'
+        )
 
     envmaptex: StringProperty(
-    name = 'Texture',
-    description = 'Envmap texture in p3d edtior.'
-    )
+        name = 'Texture',
+        description = 'Envmap texture in p3d edtior.'
+        )
 
     envmapcolour: FloatVectorProperty(  
         name="Colour",
         subtype='COLOR',
         default=(1.0, 1.0, 1.0),
         min=0.0, max=1.0,
-        description="Envmap colour in the p3d editor."
-    )
+        description="Envmap colour in the p3d editor.")
     
     lighting: BoolProperty(
         name="Lighting",
         description="Lighting option in the p3d editor.",
-        default=False,
-    )
+        default=False,)
     
     alphatest: BoolProperty(
         name="Alpha Test",
         description="Alpha test option in the p3d editor.",
-        default=False,
-    )
+        default=False,)
     
     twosided: BoolProperty(
         name="Two Sided",
         description="Two Sided test option in the p3d editor.",
-        default=False,
-    )
+        default=False,)
 
     exporttype: EnumProperty(
-    name = 'Export',
-    description = 'Choose what to export',
-    items = (
-            ('0', 'Textures and shaders', ''),
-            ('1', 'Only textures', ''),
-            ('2', 'Only shaders', '')),
-        default = '0'
-    )
+        name = 'Export',
+        description = 'Choose what to export',
+        items = (
+                ('0', 'Textures and shaders', ''),
+                ('1', 'Only textures', ''),
+                ('2', 'Only shaders', '')),
+            default = '0'
+        )
 
     selected: BoolProperty(
         name="Selected only",
         description="Export the textures and shaders of the selected objects only.",
-        default=False,
-    )
+        default=True,)
 
     def execute(self, context):
-        return write_shader_data(context, self.filepath, self.selected, self.lighting, self.filtermode, self.pddishader, self.blendmode, self.uvmode, self.diffuse, self.twosided, self.alphatest, self.envmaptex, self.envmapcolour, self.exporttype)
+        #print(self.as_keywords())
+        return write_shader_data(context, *self.as_keywords(ignore=("check_existing","filter_glob")))
 
 
     def draw(self, context):
@@ -484,7 +466,7 @@ class ExportShaderData(Operator, ExportHelper):
             
         col.prop(self, "pddishader")
         col.prop(self, "diffuse")
-        col.prop(self, "usehex")
+        #col.prop(self, "usehex")
         col.prop(self, "blendmode")
         col.prop(self, "filtermode")
         col.prop(self, "uvmode")
